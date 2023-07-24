@@ -16,3 +16,15 @@ jobs:
         env:
           GIMLET_SERVER: ${{ secrets.GIMLET_SERVER }}
           GIMLET_TOKEN: ${{ secrets.GIMLET_TOKEN }}
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.PAT }} # `PAT` is a secret that contains your Personal Access Token with `write:packages` scope
+      - name: 🚀 Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository }}:${{ github.sha }}
